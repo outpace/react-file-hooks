@@ -38,6 +38,49 @@ export const successfulUpload = async ({
   });
 };
 
+export const successfulAbortableUpload = async ({
+  onUploadProgress,
+  signal,
+}: AxiosRequestConfig) => {
+  if (onUploadProgress) {
+    const total = 100;
+    if (signal.aborted) {
+      return;
+    }
+    await delay(500);
+    if (signal.aborted) {
+      return;
+    }
+    onUploadProgress({ total, loaded: 25 });
+    if (signal.aborted) {
+      return;
+    }
+    await delay(500);
+    if (signal.aborted) {
+      return;
+    }
+    onUploadProgress({ total, loaded: 50 });
+    if (signal.aborted) {
+      return;
+    }
+    await delay(500);
+    if (signal.aborted) {
+      return;
+    }
+    onUploadProgress({ total, loaded: 100 });
+    if (signal.aborted) {
+      return;
+    }
+  }
+  if (signal.aborted) {
+    return;
+  }
+  return Promise.resolve({
+    status: 200,
+    data: { uploadedUrl: 'http://dummy.com/image.jpg' },
+  });
+};
+
 export const successfulUploadWithoutProgress = async ({
   onUploadProgress,
 }: AxiosRequestConfig) => {

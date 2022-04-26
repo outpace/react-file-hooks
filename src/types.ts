@@ -4,6 +4,7 @@ export interface UploadParams {
   method: any;
   headers?: { [key: string]: any };
   multiple?: boolean;
+  signal?: AbortSignal;
 }
 
 export interface Task {
@@ -17,6 +18,7 @@ export interface Task {
   responseData: any;
   meta?: { [key: string]: any };
   callback: Function;
+  signal?: AbortSignal;
 }
 
 export type Uploader = [

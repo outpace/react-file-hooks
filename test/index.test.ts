@@ -290,3 +290,55 @@ it('upload all files in one task', async () => {
   expect(result.current[0][0].status).toEqual('uploaded');
   expect(result.current[0][0].httpStatus).toEqual(200);
 });
+
+it('cancels in-progress tasks', async () => {
+  const controller = new AbortController();
+  const { result, waitForNextUpdate } = renderHook(() =>
+    useUploader({
+      url: 'http://dummy.com/api/upload',
+      fieldname: 'file',
+      method: 'post',
+    })
+  );
+
+  expect(result.current[0]).toEqual([]);
+
+  expect(Object.keys(result.current[1])).toEqual([
+    'startUploadTask',
+    'retryUploadTask',
+    'removeUploadTask',
+    'clearUploadTasks',
+  ]);
+
+  mockAxios.request.mockImplementationOnce(successfulUpload);
+
+  // upload
+  act(() => {
+    result.current[1].startUploadTask([file], controller.signal);
+  });
+
+  expect(result.current[0][0].status).toEqual('uploading');
+
+  await waitForNextUpdate();
+
+  expect(result.current[0][0].file).toEqual(file);
+  expect(result.current[0][0].formattedSize).toEqual('12 B');
+  expect(result.current[0][0].progress).toEqual(25);
+  expect(result.current[0][0].status).toEqual('uploading');
+
+  controller.abort();
+
+  await waitForNextUpdate();
+
+  expect(result.current[0][0].file).toEqual(file);
+  expect(result.current[0][0].formattedSize).toEqual('12 B');
+  expect(result.current[0][0].progress).toEqual(50);
+  expect(result.current[0][0].status).toEqual('uploading');
+
+  await waitForNextUpdate();
+
+  expect(result.current[0][0].file).toEqual(file);
+  expect(result.current[0][0].formattedSize).toEqual('12 B');
+  expect(result.current[0][0].progress).toEqual(100);
+  expect(result.current[0][0].status).toEqual('uploading');
+});

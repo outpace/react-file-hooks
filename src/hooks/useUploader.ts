@@ -19,7 +19,8 @@ const useUploader = ({
     setState(uploadTasks.current);
   };
 
-  const updateTask = useCallback((id: string, data: Partial<Task>) => {
+  const updateTask = useCallback(
+    (id: string, data: Partial<Task>) => {
       setUploadTask((odt: Task[]) => {
         return odt.map((el: Task) => {
           if (el.id === id) {
@@ -33,13 +34,14 @@ const useUploader = ({
   );
 
   const uploadFile = useCallback(
-    async ({ id, file, files, meta, callback }: Task) => {
+    async ({ id, file, files, meta, signal, callback }: Task) => {
       const defaultConfig = {
         onUploadProgress: ({ total, loaded }: ProgressEvent) => {
           const progress = Math.round((loaded / total) * 100);
           const status: Task['status'] = 'uploading';
           updateTask(id, { progress, status });
-        }
+        },
+        signal,
       };
       try {
         const form = new FormData();
@@ -86,8 +88,11 @@ const useUploader = ({
     [uploadTasks, updateTask]
   );
 
-  const retryUploadTask = useCallback((id: string) => {
-      const shouldUpdateTask = uploadTasks.current.find((task: Task) => task.id === id);
+  const retryUploadTask = useCallback(
+    (id: string) => {
+      const shouldUpdateTask = uploadTasks.current.find(
+        (task: Task) => task.id === id
+      );
       if (shouldUpdateTask) {
         uploadFile(shouldUpdateTask);
       }
@@ -98,17 +103,33 @@ const useUploader = ({
   const startUploadTask = useCallback(
     (
       acceptedFiles: File[] | FileList,
-      meta?: { [key: string]: any } | Function,
-      callback?: Function
+      meta?: { [key: string]: any } | Function | AbortSignal,
+      callback?: Function | AbortSignal,
+      signal?: AbortSignal
     ) => {
       // return if null or undefined
       if (!acceptedFiles) {
         return;
       }
-      if (typeof meta === 'function') {
-        callback = meta;
-        meta = undefined;
-      }
+
+      let localMeta: { [key: string]: any } | undefined;
+      let localCallback: Function | undefined;
+      let localSignal: AbortSignal | undefined;
+
+      [meta, callback, signal].forEach(v => {
+        if (v instanceof AbortSignal) {
+          localSignal = v;
+        } else if (typeof v === 'function') {
+          localCallback = v;
+        } else if (typeof v === 'object' && v !== null) {
+          localMeta = v;
+        }
+      });
+
+      signal = localSignal;
+      callback = localCallback;
+      meta = localMeta;
+
       const fileList = Array.from(acceptedFiles); // converts to array if FileList
       let arr: Task[] | [] = [];
 
@@ -122,6 +143,7 @@ const useUploader = ({
             formattedSize: formatFileSize(file.size),
             meta,
             callback,
+            signal,
           } as Task;
         });
       } else {
@@ -139,6 +161,7 @@ const useUploader = ({
             formattedSize: formatFileSize(filesSize),
             meta,
             callback,
+            signal,
           } as Task,
         ];
       }
