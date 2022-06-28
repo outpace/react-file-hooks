@@ -1,5 +1,5 @@
 {
-  "name": "@toranj/react-file-hooks",
+  "name": "@outpace/react-file-hooks",
   "version": "2.1.1",
   "description": "react hook for uploading file or files",
   "source": "./src/index.ts",
@@ -29,12 +29,12 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/toranj-org/react-file-hooks.git"
+    "url": "git+https://github.com/outpace/react-file-hooks.git"
   },
   "bugs": {
-    "url": "https://github.com/toranj-org/react-file-hooks/issues"
+    "url": "https://github.com/outpace/react-file-hooks/issues"
   },
-  "homepage": "https://github.com/toranj-org/react-file-hooks",
+  "homepage": "https://github.com/outpace/react-file-hooks",
   "files": [
     "dist",
     "es",
