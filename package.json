@@ -12,6 +12,7 @@
     "build": "npm run clean && npm run build:types && npm run build:outputs",
     "build:outputs": "rollup -c",
     "build:types": "tsc --project tsconfig.types.json",
+    "prepare": "npm run build",
     "clean": "rimraf lib dist es",
     "test": "jest",
     "test:watch": "jest --watch"
