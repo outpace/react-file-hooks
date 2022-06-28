@@ -1,6 +1,6 @@
 {
   "name": "@outpace-systems/react-file-hooks",
-  "version": "2.2.0",
+  "version": "2.2.2",
   "description": "react hook for uploading file or files",
   "source": "./src/index.ts",
   "main": "./lib/index.js",
@@ -12,10 +12,10 @@
     "build": "npm run clean && npm run build:types && npm run build:outputs",
     "build:outputs": "rollup -c",
     "build:types": "tsc --project tsconfig.types.json",
-    "prepare": "npm run build",
     "clean": "rimraf lib dist es",
     "test": "jest",
-    "test:watch": "jest --watch"
+    "test:watch": "jest --watch",
+    "prepack": "npm run build"
   },
   "keywords": [
     "react hook",
