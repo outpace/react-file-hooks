@@ -27,6 +27,9 @@
   "authors": [
     "Omid Poorali <omidpoorali1992@gmail.com> (https://github.com/toranj-org)"
   ],
+  "contributors": [
+    {"name":"Cora Sutton","url":"https://github.com/corasaurus-hex"}
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/outpace/react-file-hooks.git"
